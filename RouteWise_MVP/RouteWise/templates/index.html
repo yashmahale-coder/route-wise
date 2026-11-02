@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a1424">
+  <title>RouteWise | Intelligent Route Planner</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#"><span class="brand-mark">R</span> RouteWise</a>
+    <span class="demo-tag">Algorithm demo: Navi Mumbai network</span>
+  </header>
+
+  <main class="layout">
+    <section class="intro">
+      <h1>Find the route.<br><span>Understand the algorithm.</span></h1>
+      <p class="subtext">Compare Dijkstra's algorithm and A* search on an illustrative weighted road network.</p>
+    </section>
+
+    <section class="workspace">
+      <aside class="panel controls">
+        <div class="panel-heading"><h2>Plan a journey</h2><span class="live-dot" aria-hidden="true"></span></div>
+        <label for="start">Starting location</label>
+        <select id="start">
+          {% for key, name in locations.items() %}<option value="{{ key }}" {% if key == 'uran' %}selected{% endif %}>{{ name }}</option>{% endfor %}
+        </select>
+        <button type="button" class="swap-btn" id="swap" aria-label="Swap start and destination">⇅</button>
+        <label for="goal">Destination</label>
+        <select id="goal">
+          {% for key, name in locations.items() %}<option value="{{ key }}" {% if key == 'airoli' %}selected{% endif %}>{{ name }}</option>{% endfor %}
+        </select>
+        <button id="findRoute" class="primary-btn">Compare routes</button>
+        <p id="error" class="error" role="alert"></p>
+        <div class="legend">
+          <p>Map legend</p>
+          <div><i class="legend-line"></i> Selected route</div>
+          <div><i class="legend-node"></i> Location</div>
+        </div>
+        <p class="disclaimer">Demo only. Distances are illustrative, not live road directions or traffic data.</p>
+      </aside>
+
+      <section class="panel map-panel">
+        <div class="map-heading"><h2>Road graph</h2><span class="map-label">8 locations, 10 roads</span></div>
+        <div class="map-wrap"><svg id="network" viewBox="0 0 1020 410" role="img" aria-label="Illustrative route network"></svg></div>
+        <div class="map-footer"><span>Weighted graph</span><span>Not to geographic scale</span></div>
+      </section>
+    </section>
+
+    <section id="results" class="results hidden" aria-live="polite">
+      <div class="results-title"><h2>Algorithm comparison</h2><span class="success-pill">Calculation complete</span></div>
+      <div class="result-grid">
+        <article class="result-card is-dijkstra"><div class="card-top"><h3>Dijkstra</h3><span class="algo-icon">D</span></div><p class="metric-label">Total distance</p><p class="distance" id="dDistance">--</p><p class="path" id="dPath"></p><div class="stat"><span>Nodes expanded</span><strong id="dVisited">--</strong></div></article>
+        <article class="result-card is-astar"><div class="card-top"><h3>A* Search</h3><span class="algo-icon">A*</span></div><p class="metric-label">Total distance</p><p class="distance" id="aDistance">--</p><p class="path" id="aPath"></p><div class="stat"><span>Nodes expanded</span><strong id="aVisited">--</strong></div></article>
+      </div>
+      <p class="result-note" id="note"></p>
+    </section>
+    <footer>RouteWise · Built with Python, Flask, graph algorithms and vanilla JavaScript</footer>
+  </main>
+
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+  <script>
+    // Swap start and destination
+    document.getElementById('swap').addEventListener('click', function () {
+      var s = document.getElementById('start'), g = document.getElementById('goal'), t = s.value;
+      s.value = g.value; g.value = t;
+    });
+  </script>
+</body>
+</html>
